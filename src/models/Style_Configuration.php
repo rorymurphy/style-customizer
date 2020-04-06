@@ -19,15 +19,20 @@
 namespace StyleCustomizer;
 
 class Style_Configuration {
-    string type;
-    string template;
+    // Typed declarations for PHP 7.4+
+    // string type;
+    // string template;
+    // // Must be an array of [Uncompiled Location] => [Compiled Location]
+    // array entrypoints;
+    // array variables;
+
+    public $type;
+    public $template;
     // Must be an array of [Uncompiled Location] => [Compiled Location]
-    array entrypoints;
-    array variables;
+    public $entrypoints;
+    public $variables;
 
     function on_deserializing() {
-        array_map(function($val){
-            return (StyleVariable)$val;
-        }, $this->variables);
+
     }
 }

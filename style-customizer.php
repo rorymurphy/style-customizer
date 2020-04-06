@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WordPress LESS Config
+Plugin Name: Style Customizer
 Description: Gives users the power to tweak styles based on LESS stylesheets.
 Author: Rory Murphy
 Author URI: https://github.com/rorymurphy/
@@ -25,7 +25,6 @@ License: Affero GPL v3
 */
 
 namespace StyleCustomizer;
-use \;
 
 require_once('src/Config_Resolver.php');
 require_once('src/Settings_Manager.php');
@@ -38,9 +37,9 @@ class Style_Customizer {
 
     const CURRENT_SETTINGS_OPTION = PLUGIN_NAME . '-settings';
 
-    $style_loader = null;
-    $config_resolver = null;
-    $settings_manager = null;
+    var $style_loader = null;
+    var $config_resolver = null;
+    var $settings_manager = null;
 
     function __construct() {
         $this->config_resolver = new Config_Resolver();

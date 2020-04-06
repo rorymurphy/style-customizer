@@ -17,7 +17,6 @@
 */
 
 namespace StyleCustomizer;
-use \;
 
 require_once('models/Style_Variable.php');
 require_once('models/Style_Template.php');
@@ -25,7 +24,7 @@ require_once('models/Style_Configuration.php');
 require_once('models/Resolved_Style_Configuration.php');
 
 class Style_Loader {
-    $config_resolver;
+    var $config_resolver;
 
     function __construct($config_resolver) {
         $this->config_resolver = $config_resolver;

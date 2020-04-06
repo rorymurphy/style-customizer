@@ -17,11 +17,11 @@
 */
 
 namespace StyleCustomizer;
-use \;
 
 class Settings_Manager {
     const PAGE_NAME = 'wp_style_customizer';
-    $config_resolver;
+    const OPTION_NAME = 'wp_style_customizer_values';
+    var $config_resolver;
 
     function __construct($config_resolver) {
         $this->config_resolver = $config_resolver;
@@ -29,10 +29,46 @@ class Settings_Manager {
 
     function register_hooks() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
     }
 
     function add_admin_menu() {
         add_submenu_page('themes.php', 'Style Configuration', 'Style Configuration', 'manage_options', self::PAGE_NAME, array($this, 'admin_page') );
+    }
+
+    function register_settings() {
+        register_option(self::PAGE_NAME, self::OPTION_NAME);
+        $configs = $this->config_resolver->get_resolved_configs();
+        $configs = array_values($configs);
+        $categories = [];
+        
+        array_map(function($conf) {
+            array_map(function($var){
+                $categories[$var->category] = true;
+            }, $conf->variables);
+        },$configs);
+
+        $categories = array_keys($categories);
+        array_map(function($c) {
+            $cat_slug = self::PAGE_NAME . '_' . Utils::string_slugify_underscored($c);
+            add_settings_section(
+                $cat_slug,
+                __($c, self::PAGE_NAME),
+                array($this, 'render_setting_section'),
+                self::PAGE_NAME
+            );
+        }, $categories);
+
+        array_map()
+
+    }
+
+    function render_setting_section($args) {
+
+    }
+
+    function render_setting($args) {
+
     }
 
     function admin_page() {

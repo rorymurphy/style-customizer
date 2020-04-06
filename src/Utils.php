@@ -17,7 +17,6 @@
 */
 
 namespace StyleCustomizer;
-use \;
 
 class Utils {
     static function canonicalize($address)

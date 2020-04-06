@@ -19,12 +19,13 @@
 namespace StyleCustomizer;
 
 class Style_Template {
-    string type;
-    array variables;
+    // Typed declarations for PHP 7.4+
+    // string type;
+    // array variables;
+    public $type;
+    public $variables;
 
     function on_deserializing() {
-        array_map(function($val){
-            return (StyleVariable)$val;
-        }, $this->Variables);
+
     }
 }

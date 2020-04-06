@@ -19,11 +19,19 @@
 namespace StyleCustomizer;
 
 class Style_Variable {
-    string name;
-    string category;
-    string type;
-    string title;
-    string description;
-    string defaultValue;
-    int order;
+    // Typed declarations for PHP 7.4+
+    // string name;
+    // string category;
+    // string type;
+    // string title;
+    // string description;
+    // string defaultValue;
+    // int order;
+    public $name;
+    public $category;
+    public $type;
+    public $title;
+    public $description;
+    public $defaultValue;
+    public $order;
 }

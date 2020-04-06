@@ -19,10 +19,15 @@
 namespace StyleCustomizer;
 
 class Resolved_Style_Configuration {
-    string type;
+    // string type;
+    // // Must be an array of [Uncompiled Location] => [Compiled Location]
+    // array entrypoints;
+    // array variables;
+
+    public $type;
     // Must be an array of [Uncompiled Location] => [Compiled Location]
-    array entrypoints;
-    array variables;
+    public $entrypoints;
+    public $variables;
     
     function __construct(StyleConfiguration $config, StyleTemplate $template) {
         $this->type = $config->type;
