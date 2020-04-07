@@ -29,11 +29,11 @@ class Resolved_Style_Configuration {
     public $entrypoints;
     public $variables;
     
-    function __construct(StyleConfiguration $config, StyleTemplate $template) {
+    function __construct(Style_Configuration $config, Style_Template $template) {
         $this->type = $config->type;
         $this->entrypoints = $config->entrypoints;
         $this->variables = [];
-        if($template) {
+        if($template && $template->variables) {
             if($template->type != $this->type) {
                 throw new Exception('Styles template type must match the configuration type');
             }

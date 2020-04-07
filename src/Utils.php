@@ -35,10 +35,10 @@ class Utils {
     }
     
     static function string_slugify($string){
-        return preg_replace('/[^a-zA-Z0-9]+/', '-', $string);
+        return strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $string));
     }
 
     static function string_slugify_underscored($string){
-        return preg_replace('/[^a-zA-Z0-9]+/', '_', $string);
+        return strtolower(preg_replace('/[^a-zA-Z0-9]+/', '_', $string));
     }
 }

@@ -28,7 +28,7 @@ class Config_Resolver {
     var $configs = null;
 
     function get_resolved_configs(){
-        if($this->configs) {
+        if(!$this->configs) {
             $configs = apply_filters(self::CONFIG_FILTER_NAME, array());
             $this->configs = array_map(function($c){
 
@@ -42,7 +42,7 @@ class Config_Resolver {
 
                     $resolvedConfig = new Resolved_Style_Configuration($c, $template);
                 }else{
-                    $resolvedConfig = new Resolved_Style_Configuration($c, null);
+                    $resolvedConfig = new Resolved_Style_Configuration($c, new Style_Template());
                 }
                 return $resolvedConfig;
             }, $configs);

@@ -40,15 +40,18 @@ class Settings_Manager {
         register_setting(self::PAGE_NAME, self::OPTION_NAME);
         $configs = $this->config_resolver->get_resolved_configs();
         $configs = array_values($configs);
-        $categories = [];
+        //var_dump($configs);
 
-        array_map(function($conf) {
-            array_map(function($var){
-                $categories[$var->category] = true;
-            }, $conf->variables);
-        },$configs);
+        $categories = array_unique(
+            array_reduce( array_map(function($conf) {
+                return array_values(array_map(function($var) {
+                    return $var->category;
+                }, $conf->variables));
+            }, $configs), function($carry, $item){
+                return array_merge($carry, $item);
+            }, array())
+        );
 
-        $categories = array_keys($categories);
         array_map(function($c) {
             $cat_slug = self::PAGE_NAME . '_' . Utils::string_slugify_underscored($c);
             add_settings_section(
@@ -59,14 +62,14 @@ class Settings_Manager {
             );
         }, $categories);
 
-        $variables = [];
-        array_map(function($conf) {
-            array_map(function($var){
-                $variables[$var->name] = $var;
-            }, $conf->variables);
-        },$configs);
-
-        $variables = array_values($variables);
+        $variables = array_reduce(
+            array_map(function($conf) {
+                return $conf->variables;
+            }, $configs),
+            function($carry, $item) {
+                return array_merge($carry, $item);
+            }, array()
+        );
 
         array_map(function($var) {
             $var_slug = self::PAGE_NAME . '_' . Utils::string_slugify_underscored($var->name);
@@ -77,7 +80,12 @@ class Settings_Manager {
                 array($this, 'render_setting_field'),
                 self::PAGE_NAME,
                 $cat_slug,
-                $var
+                [
+                    'slug' => $var_slug,
+                    'title' => $var->title,
+                    'description' => $var->description,
+                    'type' => $var->type
+                ]
             );
         }, $variables);
 
@@ -87,8 +95,8 @@ class Settings_Manager {
         sprintf('<h3>%1$s</h3', $args['title']);
     }
 
-    function render_setting($args) {
-        sprintf('<div>%1$s</div>', $args->title);
+    function render_setting_field($args) {
+        sprintf('<div>%1$s</div>', $args['title']);
     }
 
     function admin_page() {

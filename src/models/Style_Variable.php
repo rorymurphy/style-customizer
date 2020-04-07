@@ -33,5 +33,6 @@ class Style_Variable {
     public $title;
     public $description;
     public $defaultValue;
+    public $value;
     public $order;
 }

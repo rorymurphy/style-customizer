@@ -32,7 +32,14 @@ class Style_Configuration {
     public $entrypoints;
     public $variables;
 
-    function on_deserializing() {
+    function __construct($values) {
+        $values = (array)$values;
+        $this->type = (string)$values['type'];
+        if(array_key_exists('template', $values)) {
+            $this->template = (string)$values['template'];
+        }
 
+        $this->entrypoints = (array)$values['entrypoints'];
+        $this->variables = (array)$values['variables'];
     }
 }

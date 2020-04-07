@@ -24,8 +24,4 @@ class Style_Template {
     // array variables;
     public $type;
     public $variables;
-
-    function on_deserializing() {
-
-    }
 }

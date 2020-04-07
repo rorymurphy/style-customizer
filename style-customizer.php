@@ -35,7 +35,7 @@ class Style_Customizer {
     const PLUGIN_NAME = 'style-customizer';
 
 
-    const CURRENT_SETTINGS_OPTION = PLUGIN_NAME . '-settings';
+    const CURRENT_SETTINGS_OPTION = self::PLUGIN_NAME . '-settings';
 
     var $style_loader = null;
     var $config_resolver = null;
@@ -50,8 +50,20 @@ class Style_Customizer {
     }
     
     function register_hooks() {
+        add_filter(Config_Resolver::CONFIG_FILTER_NAME, array($this, 'register_theme_config'));
         $this->style_loader->register_hooks();
         $this->settings_manager->register_hooks();        
+    }
+
+    function register_theme_config($configs){
+        $file_name = get_stylesheet_directory() . '/' . self::PLUGIN_NAME . '-config.json';
+        if(file_exists($file_name)){
+            $template_values = json_decode(file_get_contents($file_name));
+            // $template_values['path'] = realpath($file_name);
+            // $template_values['url'] = get_stylesheet_directory_uri() . '/' . self::PLUGIN_NAME . '-config.json';
+            $configs[] = new Style_Configuration($template_values);       
+            return $configs;
+        }
     }
 }
 
