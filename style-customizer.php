@@ -43,8 +43,8 @@ class Style_Customizer {
 
     function __construct() {
         $this->config_resolver = new Config_Resolver();
-        $this->style_loader = new Style_Loader($config_resolver);
-        $this->settings_manager = new Settings_Manager();
+        $this->style_loader = new Style_Loader($this->config_resolver);
+        $this->settings_manager = new Settings_Manager($this->config_resolver);
 
         $this->register_hooks();
     }
@@ -54,3 +54,5 @@ class Style_Customizer {
         $this->settings_manager->register_hooks();        
     }
 }
+
+$customizer = new Style_Customizer();

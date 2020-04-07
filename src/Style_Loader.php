@@ -38,13 +38,13 @@ class Style_Loader {
     /* Gets the filesystem location where generated files will be stored */
     protected function get_output_dir(){
         $uploaddir = wp_upload_dir();
-        return $uploaddir['basedir'] . '/' . self::PLUGIN_NAME;
+        return $uploaddir['basedir'] . '/' . Style_Customizer::PLUGIN_NAME;
     }
     
     /* Gets the URL for the generated stylesheet directory */
     protected function get_output_url(){
         $uploaddir = wp_upload_dir();
-        $result = $uploaddir['baseurl'] . '/' . self::PLUGIN_NAME;
+        $result = $uploaddir['baseurl'] . '/' . Style_Customizer::PLUGIN_NAME;
         $result = is_ssl() ? str_replace('http://', 'https://', $result) : $result;
         return $result;
     }
