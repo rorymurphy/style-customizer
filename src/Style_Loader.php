@@ -17,6 +17,7 @@
 */
 
 namespace StyleCustomizer;
+use \Exception;
 
 require_once('models/Style_Variable.php');
 require_once('models/Style_Template.php');
@@ -24,14 +25,18 @@ require_once('models/Style_Configuration.php');
 require_once('models/Resolved_Style_Configuration.php');
 
 class Style_Loader {
-    var $config_resolver;
+    const OPTION_NAME = 'wp_style_customizer_values';
 
-    function __construct($config_resolver) {
+    var $config_resolver;
+    var $stylesheet_compiler;
+
+    function __construct($config_resolver, $stylesheet_compiler) {
         $this->config_resolver = $config_resolver;
+        $this->stylesheet_compiler = $stylesheet_compiler;
     }
 
     function register_hooks() {
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts_and_styles'));
+        //add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts_and_styles'));
         add_filter('print_styles_array', array($this, 'filter_styles'));
     }
 
@@ -50,12 +55,8 @@ class Style_Loader {
     }
 
     
-    protected function get_css_filename($css_url, $version){
-        $wpurl = get_bloginfo('wpurl');
-        if(strpos($css_url, get_bloginfo('wpurl')) === 0){
-            $css_url = '~/' . substr($css_url, strlen($wpurl));
-        }
-        return md5($css_url) . '-' . $version . '.css';
+    protected function get_css_filename($orig_filename, $version){
+        return md5($orig_filename) . '.css';
     }
 
     function filter_styles($handles){
@@ -69,24 +70,38 @@ class Style_Loader {
         $style_urls = array();
         
         foreach($configs as $c){
-            foreach($c->entrypoints as $key => $value){
+            foreach($c->entrypoints as $src => $dest){
                 $url = '';
-                if(preg_match('/^https?\:\/\//', $value)){
-                    $url = $value;   
-                }else{
-                    $url = Utils::canonicalize(substr($c->url, 0, strrpos($c->url, '/')) . '/' . $value);
+                $content_dir = trailingslashit(ABSPATH) . 'wp-content/';
+                if(substr($dest, 0, strlen($content_dir)) !== $content_dir) {
+                    throw new Exception('Cannot process ' . $dest . '. Customized stylesheets must reside within the wp-content directory');
                 }
 
-                $style_urls[] = $url;
+                $url = str_replace($content_dir, trailingslashit(get_bloginfo('wpurl')) . 'wp-content/', $dest);
+                $style_urls[$url] = $dest;
             }
         }
+
+        // var_dump($style_urls);
+        // var_dump($wp_styles->registered);
         foreach($handles as $h){
             $s = $wp_styles->registered[$h];
-            if(in_array($s->src, $style_urls)){
-                $filename = $this->get_output_dir() . '/' . $this->get_css_filename($s->src, null);
-                printf('<!-- stylesheet %1$s :: %2$s-->', $s->src, $this->get_css_filename($s->src, null));
-                if(file_exists($filename)){
-                    $s->src = $this->get_output_url() . '/' . $this->get_css_filename($s->src, null);
+
+            if(array_key_exists($s->src, $style_urls)){
+                $filename = $this->get_output_dir() . '/' . $this->get_css_filename($style_urls[$s->src], null);
+                $url = $this->get_output_url() . '/' . $this->get_css_filename($style_urls[$s->src], null);
+                printf('<!-- stylesheet %1$s :: %2$s-->', $s->src, $filename);
+                if(!file_exists($filename)){
+                    $values = get_option(self::OPTION_NAME, null);
+                    if($values != null) {
+                        foreach($configs as $config) {
+                            $this->stylesheet_compiler->compile($config, $values);
+                        }
+                        $s->src = $url;
+                    }
+
+                }else{
+                    $s->src = $url;
                 }
             }
         }

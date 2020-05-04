@@ -18,13 +18,16 @@
 
 namespace StyleCustomizer;
 
+require_once('Stylesheet_Compiler.php');
 class Settings_Manager {
     const PAGE_NAME = 'wp_style_customizer';
     const OPTION_NAME = 'wp_style_customizer_values';
     var $config_resolver;
+    var $stylesheet_compiler;
 
-    function __construct($config_resolver) {
+    function __construct($config_resolver, $stylesheet_compiler) {
         $this->config_resolver = $config_resolver;
+        $this->stylesheet_compiler = $stylesheet_compiler;
     }
 
     function register_hooks() {
@@ -37,7 +40,9 @@ class Settings_Manager {
     }
 
     function register_settings() {
-        register_setting(self::PAGE_NAME, self::OPTION_NAME);
+        register_setting(self::PAGE_NAME, self::OPTION_NAME, array(
+            'sanitize_callback' => array($this, 'compile_styles')
+        ));
         $configs = $this->config_resolver->get_resolved_configs();
         $configs = array_values($configs);
         //var_dump($configs);
@@ -51,6 +56,8 @@ class Settings_Manager {
                 return array_merge($carry, $item);
             }, array())
         );
+
+        //var_dump($categories);
 
         array_map(function($c) {
             $cat_slug = self::PAGE_NAME . '_' . Utils::string_slugify_underscored($c);
@@ -72,7 +79,7 @@ class Settings_Manager {
         );
 
         array_map(function($var) {
-            $var_slug = self::PAGE_NAME . '_' . Utils::string_slugify_underscored($var->name);
+            $var_slug = $var->name;//Utils::string_slugify_underscored($var->name);
             $cat_slug = self::PAGE_NAME . '_' . Utils::string_slugify_underscored($var->category);
             add_settings_field(
                 $var_slug,
@@ -81,6 +88,7 @@ class Settings_Manager {
                 self::PAGE_NAME,
                 $cat_slug,
                 [
+                    'label_for' => $var_slug,
                     'slug' => $var_slug,
                     'title' => $var->title,
                     'description' => $var->description,
@@ -91,12 +99,30 @@ class Settings_Manager {
 
     }
 
+    function compile_styles($value) {
+        $configs = $this->config_resolver->get_resolved_configs();
+        foreach($configs as $config) {
+            $this->stylesheet_compiler->compile($config, $value);
+        }
+
+        return $value;
+    }
+
     function render_setting_section($args) {
-        sprintf('<h3>%1$s</h3', $args['title']);
+        printf('', $args['title']);
     }
 
     function render_setting_field($args) {
-        sprintf('<div>%1$s</div>', $args['title']);
+        $options = get_option( self::OPTION_NAME );
+        $slug = $args['slug'];
+        $field_name = self::OPTION_NAME . '[' . $args['slug'] . ']';
+        $value = array_key_exists($slug, $options) ? $options[$slug] : '';
+        if($options) {
+            printf('<input type="text" name="%1$s" value="%2$s"/>', $field_name, $value);
+        }else {
+            printf('<input type="text" name="%1$s" />', $field_name, $args['title']);
+        }
+
     }
 
     function admin_page() {

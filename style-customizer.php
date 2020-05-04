@@ -40,11 +40,15 @@ class Style_Customizer {
     var $style_loader = null;
     var $config_resolver = null;
     var $settings_manager = null;
+    var $stylesheet_compiler = null;
 
     function __construct() {
+        $uploads = wp_upload_dir();
+        $output_dir = trailingslashit($uploads['basedir']) . self::PLUGIN_NAME . '/';
         $this->config_resolver = new Config_Resolver();
-        $this->style_loader = new Style_Loader($this->config_resolver);
-        $this->settings_manager = new Settings_Manager($this->config_resolver);
+        $this->stylesheet_compiler = new Stylesheet_Compiler($output_dir);
+        $this->style_loader = new Style_Loader($this->config_resolver, $this->stylesheet_compiler);
+        $this->settings_manager = new Settings_Manager($this->config_resolver, $this->stylesheet_compiler);
 
         $this->register_hooks();
     }
@@ -56,11 +60,31 @@ class Style_Customizer {
     }
 
     function register_theme_config($configs){
-        $file_name = get_stylesheet_directory() . '/' . self::PLUGIN_NAME . '-config.json';
+        $stylesheet_dir = trailingslashit(get_stylesheet_directory());
+        $stylesheet_uri = get_stylesheet_uri();
+        $file_name = $stylesheet_dir . self::PLUGIN_NAME . '-config.json';
         if(file_exists($file_name)){
             $template_values = json_decode(file_get_contents($file_name));
-            // $template_values['path'] = realpath($file_name);
-            // $template_values['url'] = get_stylesheet_directory_uri() . '/' . self::PLUGIN_NAME . '-config.json';
+            $entrypoints = array();
+            foreach($template_values->entrypoints as $path => $dest) {
+                $resolved_path = $stylesheet_dir . $path;
+                $resolved_path = realpath($resolved_path);
+
+                if(substr($resolved_path, 0, strlen($stylesheet_dir)) !== $stylesheet_dir) {
+                    throw new Exception('Style customizer configs cannot refer to files outside the current theme');
+                }
+
+                $dest_path = $stylesheet_dir . $dest;
+                $dest_path = realpath($dest_path);
+                if(substr($dest_path, 0, strlen($stylesheet_dir)) !== $stylesheet_dir) {
+                    throw new Exception('Style customizer configs cannot refer to files outside the current theme');
+                }
+
+                //$resolved_url = $stylesheet_uri . $url;
+                $entrypoints[$resolved_path] = $dest_path;
+            }
+            $template_values->entrypoints = $entrypoints;
+
             $configs[] = new Style_Configuration($template_values);       
             return $configs;
         }
