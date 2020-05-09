@@ -1,5 +1,8 @@
 {
     "require": {
         "scssphp/scssphp": "1.0.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "9.0"
     }
 }

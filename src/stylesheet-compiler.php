@@ -32,11 +32,10 @@ class Stylesheet_Compiler {
         }
         switch(strtolower($config->type)) {
             case 'scss':
-                require 'compilers/Scss_Compiler.php';
+                require 'compilers/scss-compiler.php';
                 $compiler = new Scss_Compiler();
                 break;
             default:
-                var_dump($config);
                 throw new Exception('Unrecognized stylesheet type');
         }
 

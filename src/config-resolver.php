@@ -18,10 +18,10 @@
 
 namespace StyleCustomizer;
 
-require_once('models/Style_Variable.php');
-require_once('models/Style_Template.php');
-require_once('models/Style_Configuration.php');
-require_once('models/Resolved_Style_Configuration.php');
+require_once('models/style-variable.php');
+require_once('models/style-template.php');
+require_once('models/style-configuration.php');
+require_once('models/resolved-style-configuration.php');
 
 class Config_Resolver {
     const CONFIG_FILTER_NAME = Style_Customizer::PLUGIN_NAME . '-configurations';

@@ -18,7 +18,7 @@
 
 namespace StyleCustomizer;
 
-require_once('Stylesheet_Compiler.php');
+require_once('stylesheet-compiler.php');
 class Settings_Manager {
     const PAGE_NAME = 'wp_style_customizer';
     const OPTION_NAME = 'wp_style_customizer_values';

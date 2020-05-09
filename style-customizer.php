@@ -26,10 +26,10 @@ License: Affero GPL v3
 
 namespace StyleCustomizer;
 
-require_once('src/Config_Resolver.php');
-require_once('src/Settings_Manager.php');
-require_once('src/Style_Loader.php');
-require_once('src/Utils.php');
+require_once('src/config-resolver.php');
+require_once('src/settings-manager.php');
+require_once('src/style-loader.php');
+require_once('src/utils.php');
 
 class Style_Customizer {
     const PLUGIN_NAME = 'style-customizer';
