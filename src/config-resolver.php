@@ -12,11 +12,17 @@ require_once('models/style-configuration.php');
 require_once('models/resolved-style-configuration.php');
 
 class Config_Resolver {
-    const CONFIG_FILTER_NAME = Style_Customizer::PLUGIN_NAME . '-configurations';
+    const PLUGIN_NAME = 'style-customizer';
+    const CONFIG_FILTER_NAME = self::PLUGIN_NAME . '-configurations';
+    var $template_dir;
     var $configs = null;
 
-    function __construct() {
-
+    function __construct($template_dir = null) {
+        if($template_dir) {
+            $this->template_dir = $template_dir;
+        }else {
+            $this->template_dir = realpath(__DIR__) . '/templates';
+        }
     }
 
     function get_resolved_configs(){
@@ -26,7 +32,7 @@ class Config_Resolver {
 
                 $resolvedConfig = null;
                 if($c->template){
-                    $template_filename = sprintf('%1$s/templates/%2$s.json', realpath(__DIR__), $c->template);
+                    $template_filename = sprintf('%1$s/%2$s.json', $this->template_dir, $c->template);
                     $template_filename = realpath($template_filename);
                     $contents = file_get_contents($template_filename);
                     $template = json_decode($contents);

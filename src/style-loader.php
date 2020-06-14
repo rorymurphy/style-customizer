@@ -13,6 +13,7 @@ require_once('models/style-configuration.php');
 require_once('models/resolved-style-configuration.php');
 
 class Style_Loader {
+    const PLUGIN_NAME = 'style-customizer';
     const OPTION_NAME = 'wp_style_customizer_values';
 
     var $config_resolver;
@@ -31,7 +32,7 @@ class Style_Loader {
     /* Gets the filesystem location where generated files will be stored */
     protected function get_output_dir(){
         $uploaddir = wp_upload_dir();
-        return $uploaddir['basedir'] . '/' . Style_Customizer::PLUGIN_NAME;
+        return $uploaddir['basedir'] . '/' . self::PLUGIN_NAME;
     }
     
     /* Gets the URL for the generated stylesheet directory */
