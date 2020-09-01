@@ -1,5 +1,5 @@
-#WordPress Style Customizer
-##Change the look of your entire site, no CSS required
+# WordPress Style Customizer
+## Change the look of your entire site, no CSS required
 
 The Style Customizer plugin enables theme developers to define attributes of an SCSS stylesheet that users can override
 directly through the WordPres UI. Each time an update is made, the SCSS is recompiled on the fly and automatically versioned
