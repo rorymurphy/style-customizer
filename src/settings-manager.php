@@ -1,5 +1,6 @@
 <?php
 /*
+Copyright (C) 2020 Rory Murphy
 This is copyrighted software. Please see the LICENSE.TXT in the root of the project for permitted uses.
 */
 
@@ -79,7 +80,8 @@ class Settings_Manager {
                     'slug' => $var_slug,
                     'title' => $var->title,
                     'description' => $var->description,
-                    'type' => $var->type
+                    'type' => $var->type,
+                    'default_value' => $var->defaultValue
                 ]
             );
         }, $variables);
@@ -103,13 +105,9 @@ class Settings_Manager {
         $options = get_option( self::OPTION_NAME );
         $slug = $args['slug'];
         $field_name = self::OPTION_NAME . '[' . $args['slug'] . ']';
-        $value = array_key_exists($slug, $options) ? $options[$slug] : '';
-        if($options) {
-            printf('<input type="text" name="%1$s" value="%2$s"/>', $field_name, $value);
-        }else {
-            printf('<input type="text" name="%1$s" />', $field_name, $args['title']);
-        }
-
+        $value = array_key_exists($slug, $options) ? $options[$slug] : null;
+        $value = $value ? $value : $args['default_value'];
+        printf('<input type="text" name="%1$s" value="%2$s"/>', $field_name, $value);
     }
 
     function admin_page() {

@@ -15,10 +15,12 @@ class Scss_Compiler {
         $vars = array();
 
         foreach($variable_values as $key => $val) {
-            $vars[] = array(
-                'name' => $key,
-                'value' => $val
-            );
+            if($val) {
+                $vars[] = array(
+                    'name' => $key,
+                    'value' => $val
+                );
+            }
         }
 
         usort($vars, function($a, $b) use($config) {

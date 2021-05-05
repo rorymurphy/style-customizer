@@ -9,7 +9,7 @@ License: BSD 3-clause
 */
 
 namespace StyleCustomizer;
-
+use \Exception;
 require_once('src/config-resolver.php');
 require_once('src/settings-manager.php');
 require_once('src/style-loader.php');
@@ -51,11 +51,14 @@ class Style_Customizer {
             $template_values = json_decode(file_get_contents($file_name));
             $entrypoints = array();
             foreach($template_values->entrypoints as $path => $dest) {
-                $resolved_path = $stylesheet_dir . $path;
-                $resolved_path = realpath($resolved_path);
-
+                $stylesheet_path = $stylesheet_dir . $path;
+                $resolved_path = realpath($stylesheet_path);
+                if(!$resolved_path && $stylesheet_path) {
+                    throw new Exception('A source stylesheet referred to in the style-customizer config does not exist');
+                }
+                
                 if(substr($resolved_path, 0, strlen($stylesheet_dir)) !== $stylesheet_dir) {
-                    throw new Exception('Style customizer configs cannot refer to files outside the current theme');
+                    throw new Exception('Style customizer configs cannot refer to files outside the current theme.');
                 }
 
                 $dest_path = $stylesheet_dir . $dest;

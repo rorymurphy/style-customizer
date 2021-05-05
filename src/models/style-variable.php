@@ -13,25 +13,25 @@ class Style_Variable {
     // string type;
     // string title;
     // string description;
-    // string defaultValue;
+    // string default_value;
     // int order;
     public $name;
     public $category;
     public $type;
     public $title;
     public $description;
-    public $defaultValue;
+    public $default_value;
     public $value;
     public $order;
 
-    public static function withValues($name, $category, $type, $title, $description, $defaultValue, $value, $order) {
+    public static function withValues($name, $category, $type, $title, $description, $default_value, $value, $order) {
         $inst = new Style_Variable();
         $inst->name = $name;
         $inst->category = $category;
         $inst->type = $type;
         $inst->title = $title;
         $inst->description = $description;
-        $inst->defaultValue = $defaultValue;
+        $inst->default_value = $default_value;
         $inst->value = $value;
         $inst->order = $order;
 
